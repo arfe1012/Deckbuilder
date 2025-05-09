@@ -4,7 +4,7 @@
       "damage": 30,
       "money": 80,
       "start_deck": [
-        {"attack": 6, "health": 1, "block": 0, "poison": 3, "blood": 0, "crit": 20},
+        {"attack": 7, "health": 1, "block": 0, "poison": 3, "blood": 0, "crit": 20},
         {"attack": 5, "health": 1, "block": 1, "poison": 2, "blood": 0, "crit": 25},
         {"attack": 4, "health": 1, "block": 0, "poison": 3, "blood": 0, "crit": 30},
         {"attack": 3, "health": 1, "block": 2, "poison": 2, "blood": 0, "crit": 15},
