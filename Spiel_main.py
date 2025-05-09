@@ -8,7 +8,7 @@ from Screen_and_Backrounds import screenscale,bild_laden,scale_bg
 # Hauptprogramm
 # ──────────────────────────────────────────────────────────────────────────────
 
-def main() -> None:
+def main(charakter_name = None):
     pygame.init()
 
     screen,screen_width,screen_height = screenscale()
@@ -19,11 +19,14 @@ def main() -> None:
     kampfscreen_orig = bild_laden(asset_dir / "Arena.png")
 
     # Aktuell angezeigtes Originalbild & skalierte Variante
-    current_orig = ladescreen_orig
+    current_orig = kampfscreen_orig
     background = scale_bg((screen_width, screen_height), current_orig)
 
     clock = pygame.time.Clock()
     running = True
+
+
+    b= charakter_name
 
     while running:
         for event in pygame.event.get():
@@ -32,12 +35,6 @@ def main() -> None:
 
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
-
-            elif event.type == pygame.KEYDOWN:
-                # Beispiel-Taste: mit "K" zwischen Lade- und Kampfscreen umschalten
-                if event.key == pygame.K_k:
-                    current_orig = kampfscreen_orig if current_orig != kampfscreen_orig else ladescreen_orig
-                    background = scale_bg((screen_width, screen_height), current_orig)
 
             elif event.type == pygame.VIDEORESIZE:
                 screen_width, screen_height = event.size

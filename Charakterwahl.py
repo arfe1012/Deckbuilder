@@ -18,7 +18,7 @@ from dataclasses import dataclass
 
 import pygame
 from Screen_and_Backrounds import screenscale, bild_laden, scale_bg
-
+from Spiel_main import main
 # ──────────────────────────────────────────────────────────────────────────────
 # Datenmodell
 # ──────────────────────────────────────────────────────────────────────────────
@@ -36,19 +36,19 @@ class Character:
 # ──────────────────────────────────────────────────────────────────────────────
 
 def load_characters(asset_dir: Path) -> list[Character]:
-    """Erstellt vier Beispiel‑Charaktere (Name, Stats, Bild)."""
+    """Erstellt vier Beispiel-Charaktere (Name, Stats, Bild)."""
     raw_data = [
-        ("Rogue",  {"HP": 70, "Attack": 12, "Speed": 18}, asset_dir / "char_0.png"),
-        ("Knight", {"HP": 90, "Attack": 15, "Speed": 10}, asset_dir / "char_1.png"),
-        ("Mage",   {"HP": 60, "Attack": 20, "Speed": 12}, asset_dir / "char_2.png"),
-        ("Cleric", {"HP": 80, "Attack": 10, "Speed": 14}, asset_dir / "char_3.png"),
+        ("Assasin",  {"HP": 70, "Damage": 30, "Money": 80, "Deck": "Blutungsschaden"}, asset_dir / "char_0.png"),
+        ("Mushroom", {"HP": 90, "Damage": 15, "Money": 40, "Deck": "Giftschaden"},    asset_dir / "char_1.png"),
+        ("Viking",   {"HP": 130, "Damage": 20, "Money": 60, "Deck": "Block"},          asset_dir / "char_2.png"),
+        ("Warrior",  {"HP": 120, "Damage": 18, "Money": 50, "Deck": "Angriffsschaden"}, asset_dir / "char_3.png"),
     ]
 
     characters: list[Character] = []
     for name, stats, path in raw_data:
         img = bild_laden(path)
         if img is None:
-            # Fallback: farbige Fläche mit Namens‑Text
+            # Fallback: farbige Fläche mit Namens-Text
             img = pygame.Surface((256, 256))
             img.fill((80, 80, 80))
             font = pygame.font.SysFont(None, 32, bold=True)
@@ -83,7 +83,16 @@ def layout_characters(characters: list[Character], screen_rect: pygame.Rect) -> 
 def run_character_select() -> Character | None:
     pygame.init()
 
-    screen, sw, sh = screenscale()
+    screen,screen_width,screen_height = screenscale()
+
+    # ── Hintergrundbilder laden ────────────────────────────────────────────
+    asset_dir = Path(__file__).parent / "Grafiken"
+    ladescreen_orig = bild_laden(asset_dir / "background_sts.png")
+    kampfscreen_orig = bild_laden(asset_dir / "Arena.png")
+
+    # Aktuell angezeigtes Originalbild & skalierte Variante
+    current_orig = ladescreen_orig
+    background = scale_bg((screen_width, screen_height), current_orig)
     screen_rect = screen.get_rect()
 
     asset_dir = Path(__file__).parent / "Grafiken"
@@ -101,6 +110,11 @@ def run_character_select() -> Character | None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.VIDEORESIZE:
+                screen_width, screen_height = event.size
+                screen = pygame.display.set_mode(event.size, pygame.RESIZABLE)
+                background = scale_bg(event.size, current_orig)
+
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
             elif event.type == pygame.MOUSEMOTION:
@@ -114,7 +128,10 @@ def run_character_select() -> Character | None:
                 return hovered
 
         # ── Zeichnen ────────────────────────────────────────────────────────
-        screen.fill((25, 25, 35))
+        if background:
+            screen.blit(background, (0, 0))
+        else:
+            screen.fill((30, 30, 30))
 
         # Charakterportraits
         for char in characters:
@@ -124,21 +141,30 @@ def run_character_select() -> Character | None:
 
         # Stats‑Panel, wenn etwas gehovered ist
         if hovered:
-            panel_w, panel_h = 300, 160
+            # Dynamische Höhe je nach Anzahl der Stat-Zeilen
+            line_h = font_stats.get_height() + 4
+            stats_lines = [f"{k}: {v}" for k, v in hovered.stats.items()]
+            panel_w = 360
+            panel_h = 28 + line_h * (len(stats_lines) + 1)
+
             panel_rect = pygame.Rect(0, 0, panel_w, panel_h)
             panel_rect.midbottom = (screen_rect.centerx, screen_rect.bottom - 30)
-            pygame.draw.rect(screen, (50, 50, 70), panel_rect, border_radius=12)
-            pygame.draw.rect(screen, (220, 220, 220), panel_rect, width=2, border_radius=12)
 
+            # Halbtransparente Fläche, KEIN sichtbarer Rahmen
+            panel_surf = pygame.Surface(panel_rect.size, pygame.SRCALPHA)
+            panel_surf.fill((40, 40, 60, 220))
+            screen.blit(panel_surf, panel_rect)
+
+            # Titel
             name_surf = font_title.render(hovered.name, True, (240, 240, 240))
-            screen.blit(name_surf, (panel_rect.x + 16, panel_rect.y + 12))
+            screen.blit(name_surf, (panel_rect.x + 16, panel_rect.y + 10))
 
-            y_cursor = panel_rect.y + 60
-            for key, value in hovered.stats.items():
-                stat_text = f"{key}: {value}"
-                stat_surf = font_stats.render(stat_text, True, (220, 220, 220))
+            # Stat-Zeilen
+            y_cursor = panel_rect.y + 10 + font_title.get_height() + 8
+            for line in stats_lines:
+                stat_surf = font_stats.render(line, True, (220, 220, 220))
                 screen.blit(stat_surf, (panel_rect.x + 16, y_cursor))
-                y_cursor += 32
+                y_cursor += line_h
 
         pygame.display.flip()
         clock.tick(60)
@@ -155,4 +181,5 @@ if __name__ == "__main__":
     chosen = run_character_select()
     if chosen:
         print("Gewählt:", chosen.name)
+        main(chosen.name)
     sys.exit()
