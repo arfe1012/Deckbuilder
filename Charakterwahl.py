@@ -19,6 +19,7 @@ from dataclasses import dataclass
 import pygame
 from Screen_and_Backrounds import screenscale, bild_laden, scale_bg
 from Spiel_main import main
+from Sounds.Sound import play_bgm,stop_bgm
 # ──────────────────────────────────────────────────────────────────────────────
 # Datenmodell
 # ──────────────────────────────────────────────────────────────────────────────
@@ -82,7 +83,7 @@ def layout_characters(characters: list[Character], screen_rect: pygame.Rect) -> 
 
 def run_character_select() -> Character | None:
     pygame.init()
-
+    play_bgm("Sounds\game soundtrack 2.wav", volume=0.4)
     screen,screen_width,screen_height = screenscale()
 
     # ── Hintergrundbilder laden ────────────────────────────────────────────
@@ -180,6 +181,7 @@ def run_character_select() -> Character | None:
 if __name__ == "__main__":
     chosen = run_character_select()
     if chosen:
+        stop_bgm()
         print("Gewählt:", chosen.name)
         main(chosen.name)
     sys.exit()
