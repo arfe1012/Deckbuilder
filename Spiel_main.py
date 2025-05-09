@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 import pygame
 from Screen_and_Backrounds import screenscale,bild_laden,scale_bg
-
+from Sounds.Sound import play_bgm,stop_bgm
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Hauptprogramm
@@ -10,7 +10,7 @@ from Screen_and_Backrounds import screenscale,bild_laden,scale_bg
 
 def main(charakter_name = None):
     pygame.init()
-
+    play_bgm("Sounds\Hölenmusik.wav", volume=1.2)
     screen,screen_width,screen_height = screenscale()
 
     # ── Hintergrundbilder laden ────────────────────────────────────────────
