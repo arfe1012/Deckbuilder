@@ -3,7 +3,7 @@ from pathlib import Path
 import pygame
 from Screen_and_Backrounds import screenscale,bild_laden,scale_bg
 from Sounds.Sound import play_bgm,stop_bgm
-
+from cardslot import create_hand
 # ──────────────────────────────────────────────────────────────────────────────
 # Hauptprogramm
 # ──────────────────────────────────────────────────────────────────────────────
