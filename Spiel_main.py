@@ -2,13 +2,14 @@ import sys
 from pathlib import Path
 import pygame
 from Screen_and_Backrounds import screenscale,bild_laden,scale_bg
+from Game.GameManager import GameManager
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Hauptprogramm
 # ──────────────────────────────────────────────────────────────────────────────
 
-def main(charakter_name = None):
+def main(character_name):
     pygame.init()
 
     screen,screen_width,screen_height = screenscale()
@@ -25,8 +26,7 @@ def main(charakter_name = None):
     clock = pygame.time.Clock()
     running = True
 
-
-    b= charakter_name
+    game_manager = GameManager(character_name.lower())
 
     while running:
         for event in pygame.event.get():

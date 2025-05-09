@@ -36,8 +36,6 @@ class GameManager:
             money=char_data["money"],
             start_deck=cards
         )
-    def load_room(self):
-        test = "test"
 
     def get_player(self):
         return self.player
