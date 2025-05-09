@@ -1,0 +1,90 @@
+{
+    "assassin": {
+      "health": 70,
+      "damage": 30,
+      "money": 80,
+      "start_deck": [
+        {"attack": 6, "health": 1, "block": 0, "poison": 3, "blood": 0, "crit": 20},
+        {"attack": 5, "health": 1, "block": 1, "poison": 2, "blood": 0, "crit": 25},
+        {"attack": 4, "health": 1, "block": 0, "poison": 3, "blood": 0, "crit": 30},
+        {"attack": 3, "health": 1, "block": 2, "poison": 2, "blood": 0, "crit": 15},
+        {"attack": 7, "health": 1, "block": 0, "poison": 4, "blood": 0, "crit": 10},
+        {"attack": 5, "health": 1, "block": 0, "poison": 3, "blood": 0, "crit": 25},
+        {"attack": 6, "health": 1, "block": 1, "poison": 1, "blood": 0, "crit": 20},
+        {"attack": 4, "health": 1, "block": 0, "poison": 2, "blood": 0, "crit": 15},
+        {"attack": 5, "health": 1, "block": 1, "poison": 3, "blood": 0, "crit": 30},
+        {"attack": 6, "health": 1, "block": 0, "poison": 2, "blood": 0, "crit": 20},
+        {"attack": 4, "health": 1, "block": 0, "poison": 1, "blood": 0, "crit": 10},
+        {"attack": 5, "health": 1, "block": 2, "poison": 2, "blood": 0, "crit": 15},
+        {"attack": 6, "health": 1, "block": 1, "poison": 1, "blood": 0, "crit": 25},
+        {"attack": 3, "health": 1, "block": 0, "poison": 4, "blood": 0, "crit": 10},
+        {"attack": 7, "health": 1, "block": 1, "poison": 2, "blood": 0, "crit": 20}
+      ]
+    },
+    "mushroom": {
+      "health": 90,
+      "damage": 15,
+      "money": 40,
+      "start_deck": [
+        {"attack": 2, "health": 3, "block": 2, "poison": 1, "blood": 0, "crit": 5},
+        {"attack": 1, "health": 4, "block": 3, "poison": 2, "blood": 0, "crit": 0},
+        {"attack": 3, "health": 3, "block": 2, "poison": 2, "blood": 0, "crit": 5},
+        {"attack": 2, "health": 5, "block": 2, "poison": 1, "blood": 0, "crit": 0},
+        {"attack": 1, "health": 4, "block": 3, "poison": 3, "blood": 0, "crit": 0},
+        {"attack": 2, "health": 3, "block": 4, "poison": 1, "blood": 0, "crit": 0},
+        {"attack": 3, "health": 2, "block": 2, "poison": 2, "blood": 0, "crit": 5},
+        {"attack": 2, "health": 4, "block": 1, "poison": 1, "blood": 0, "crit": 5},
+        {"attack": 1, "health": 5, "block": 3, "poison": 2, "blood": 0, "crit": 0},
+        {"attack": 2, "health": 3, "block": 2, "poison": 2, "blood": 0, "crit": 5},
+        {"attack": 3, "health": 3, "block": 2, "poison": 1, "blood": 0, "crit": 5},
+        {"attack": 2, "health": 4, "block": 3, "poison": 2, "blood": 0, "crit": 0},
+        {"attack": 1, "health": 5, "block": 4, "poison": 3, "blood": 0, "crit": 0},
+        {"attack": 2, "health": 4, "block": 2, "poison": 2, "blood": 0, "crit": 5},
+        {"attack": 3, "health": 2, "block": 1, "poison": 3, "blood": 0, "crit": 5}
+      ]
+    },
+    "viking": {
+      "health": 130,
+      "damage": 20,
+      "money": 60,
+      "start_deck": [
+        {"attack": 7, "health": 2, "block": 2, "poison": 0, "blood": 2, "crit": 10},
+        {"attack": 6, "health": 2, "block": 1, "poison": 0, "blood": 3, "crit": 5},
+        {"attack": 8, "health": 2, "block": 1, "poison": 0, "blood": 1, "crit": 10},
+        {"attack": 7, "health": 3, "block": 1, "poison": 0, "blood": 2, "crit": 5},
+        {"attack": 6, "health": 2, "block": 2, "poison": 0, "blood": 3, "crit": 10},
+        {"attack": 9, "health": 2, "block": 0, "poison": 0, "blood": 1, "crit": 15},
+        {"attack": 7, "health": 2, "block": 1, "poison": 0, "blood": 2, "crit": 10},
+        {"attack": 6, "health": 3, "block": 1, "poison": 0, "blood": 2, "crit": 5},
+        {"attack": 8, "health": 1, "block": 2, "poison": 0, "blood": 2, "crit": 15},
+        {"attack": 7, "health": 2, "block": 1, "poison": 0, "blood": 3, "crit": 10},
+        {"attack": 9, "health": 1, "block": 1, "poison": 0, "blood": 2, "crit": 10},
+        {"attack": 6, "health": 2, "block": 2, "poison": 0, "blood": 2, "crit": 5},
+        {"attack": 7, "health": 3, "block": 1, "poison": 0, "blood": 2, "crit": 10},
+        {"attack": 8, "health": 2, "block": 0, "poison": 0, "blood": 3, "crit": 15},
+        {"attack": 7, "health": 2, "block": 1, "poison": 0, "blood": 2, "crit": 10}
+      ]
+    },
+    "warrior": {
+      "health": 120,
+      "damage": 18,
+      "money": 50,
+      "start_deck": [
+        {"attack": 5, "health": 3, "block": 3, "poison": 0, "blood": 0, "crit": 5},
+        {"attack": 6, "health": 2, "block": 2, "poison": 0, "blood": 0, "crit": 10},
+        {"attack": 4, "health": 3, "block": 3, "poison": 0, "blood": 0, "crit": 5},
+        {"attack": 7, "health": 2, "block": 2, "poison": 0, "blood": 0, "crit": 10},
+        {"attack": 5, "health": 4, "block": 2, "poison": 0, "blood": 0, "crit": 5},
+        {"attack": 6, "health": 3, "block": 3, "poison": 0, "blood": 0, "crit": 10},
+        {"attack": 4, "health": 3, "block": 4, "poison": 0, "blood": 0, "crit": 5},
+        {"attack": 5, "health": 2, "block": 3, "poison": 0, "blood": 0, "crit": 10},
+        {"attack": 6, "health": 3, "block": 2, "poison": 0, "blood": 0, "crit": 5},
+        {"attack": 7, "health": 2, "block": 3, "poison": 0, "blood": 0, "crit": 10},
+        {"attack": 4, "health": 4, "block": 2, "poison": 0, "blood": 0, "crit": 5},
+        {"attack": 5, "health": 3, "block": 2, "poison": 0, "blood": 0, "crit": 10},
+        {"attack": 6, "health": 3, "block": 3, "poison": 0, "blood": 0, "crit": 5},
+        {"attack": 5, "health": 2, "block": 4, "poison": 0, "blood": 0, "crit": 5},
+        {"attack": 7, "health": 3, "block": 2, "poison": 0, "blood": 0, "crit": 10}
+      ]
+    }
+  }
