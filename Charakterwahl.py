@@ -152,7 +152,7 @@ def run_character_select() -> Character | None:
 
             # Halbtransparente Fläche, KEIN sichtbarer Rahmen
             panel_surf = pygame.Surface(panel_rect.size, pygame.SRCALPHA)
-            panel_surf.fill((40, 40, 60, 220))
+            panel_surf.fill((0, 0, 0, 0))
             screen.blit(panel_surf, panel_rect)
 
             # Titel
