@@ -1,4 +1,5 @@
 from Game_Objects.Enemy import Enemy
+import pygame
 
 class Room:
     def __init__(self, player):
@@ -7,18 +8,18 @@ class Room:
         self.left_deck = player.start_deck
         self.shown_cards = []
         self.right_deck = []
+        self.Hud_font = HUD_FONT = pygame.font.SysFont(None, 32, bold=True)
+        self.Hud_color = HUD_COLOR = (250, 240, 200)  
 
     def show_next_cards(self):
         for index, card in enumerate(self.left_deck[:5]):
             self.shown_cards.append(card)
 
     def move_card(self, from_index, to_index):
-        print("Moving card " + str(from_index) + " to " + str(to_index))
+        
         tmp_to_index = self.shown_cards[to_index]
         self.shown_cards[to_index] = self.shown_cards[from_index]
         self.shown_cards[from_index] = tmp_to_index
-        for card in self.shown_cards:
-            print(card)
 
     def attack(self):
         final_health = 0
@@ -43,7 +44,6 @@ class Room:
             final_health = self.make_operation(final_health, tmp_health[index], tmp_health_operation[index])
             final_damage = self.make_operation(final_damage, tmp_damage[index], tmp_damage_operation[index])
             final_crit = self.make_operation(final_crit, tmp_crit[index], tmp_crit_operation[index])
-        print("Final Health: " + str(final_health) + " Final Damage: " + str(final_damage) + " Final Crit: " + str(final_crit))
         return final_health,final_crit,final_damage
         
     def make_operation(self, a, b, operation):
@@ -55,6 +55,29 @@ class Room:
             return a*b
         if operation == "/":
             return a/b
+
+    
+    def draw_room_result(self,screen: pygame.Surface,
+                        final_health: int,
+                        final_damage: int,
+                        final_crit: int,
+                        x: int = 20,
+                        y: int = 20,
+                        line_gap: int = 6) -> None:
+        
+        lines = [
+            f"Health : {round(final_health,2)}",
+            f"Damage : {round(final_damage,2)}",
+            f"Crit   : {round(final_crit,2)}%",
+        ]
+
+        y_cursor = y
+        for line in lines:
+            surf = self.Hud_font.render(line, True, self.Hud_color)
+            screen.blit(surf, (x, y_cursor))
+            y_cursor += surf.get_height() + line_gap
+
+
 
     def __str__(self):
         return (f"Room:\n"

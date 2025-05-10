@@ -19,7 +19,7 @@ from dataclasses import dataclass
 import pygame
 from Screen_and_Backrounds import screenscale, bild_laden, scale_bg
 from Spiel_main import main
-from Sounds.Sound import play_bgm,stop_bgm
+from Sounds.Sound import play_bgm, stop_bgm,play_sfx
 # ──────────────────────────────────────────────────────────────────────────────
 # Datenmodell
 # ──────────────────────────────────────────────────────────────────────────────
@@ -126,6 +126,7 @@ def run_character_select() -> Character | None:
                         break
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and hovered:
                 # Charakter gewählt → zurückgeben
+                play_sfx("Sounds\card_back.wav", volume=1)
                 return hovered
 
         # ── Zeichnen ────────────────────────────────────────────────────────
@@ -142,7 +143,7 @@ def run_character_select() -> Character | None:
 
         # Stats‑Panel, wenn etwas gehovered ist
         if hovered:
-            # Dynamische Höhe je nach Anzahl der Stat-Zeilen
+            # Dynamische Höhe je nach Anzahl der Stat-Zeileng
             line_h = font_stats.get_height() + 4
             stats_lines = [f"{k}: {v}" for k, v in hovered.stats.items()]
             panel_w = 360

@@ -1,6 +1,7 @@
 # hand.py  ──  minimaler Helfer für dein Deck-Builder-HUD
 import pygame
 from typing import List
+from Sounds.Sound import play_sfx
 
 CARD_SCALE = 0.35          # größenabhängig von Original-PNG
 CARD_GAP   = 30            # horizontaler Abstand zwischen Karten
@@ -72,11 +73,13 @@ def handle_hand_events(events, hand: List[CardSlot], room) -> None:
             # Reihenfolge tauschen, falls sinnvoll
             if target_idx is not None and target_idx != origin_idx:
                 room.move_card(origin_idx, target_idx)
+                play_sfx("Sounds\card_slide.wav", volume=0.8)
 
             # Slot auf Ziel-Rect zurückschnappen lassen
             for i, slot in enumerate(hand):
                 slot.rect.topleft = slot.target.topleft
                 slot.drag = False
+                play_sfx("Sounds\card_back.wav", volume=0.8)
 
         elif ev.type == pygame.MOUSEMOTION and dragged_slot:
             # Karte folgt Maus (unter Beibehaltung des Klick-Offsets)

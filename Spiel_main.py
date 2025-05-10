@@ -3,14 +3,15 @@ from pathlib import Path
 import pygame
 
 from Screen_and_Backrounds import screenscale, bild_laden, scale_bg
-from Sounds.Sound import play_bgm, stop_bgm
+from Sounds.Sound import play_bgm, stop_bgm,play_sfx
 import cardslot as hand                      # <– Modul komplett importieren
 from Game.GameManager import GameManager
 
 
 def main(character_name="warrior"):
     pygame.init()
-    
+    # HUD_FONT = pygame.font.SysFont(None, 32, bold=True)
+    # HUD_COLOR = (250, 240, 200)            # helles Beige, gut lesbar
     play_bgm(r"Sounds/Hölenmusik.wav", volume=1.0)
 
     screen, sw, sh = screenscale()
@@ -26,7 +27,8 @@ def main(character_name="warrior"):
     game_manager.room.show_next_cards()
     current_room = game_manager.room
     current_cards = game_manager.room.shown_cards
-
+    #Spieler erzeugen---------------------------------
+    Spieler = game_manager.get_player()
     # Karten vorbereiten ----------------------------------------------------
     blank = pygame.image.load("Grafiken/card.png").convert_alpha()
     card_imgs = [blank] * 5                       # später echte Artworks hier
@@ -43,8 +45,7 @@ def main(character_name="warrior"):
                 running = False
             elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                 running = False
-            elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_k:
-                current_room.attack()
+                
             elif ev.type == pygame.VIDEORESIZE:
                 sw, sh = ev.size
                 screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
@@ -58,28 +59,55 @@ def main(character_name="warrior"):
         # ---------------------------- Zeichnen -----------------------------
         screen.blit(background, (0, 0))
         hand.draw_hand(screen, hand_slots)
+        Spieler.draw_sprite(screen, scale=0.55)#Spieler zeichnen
 
         # Platzhalter-Text auf Karten
         for index, slot in enumerate(hand_slots):
-            lbl_health = font.render("Health: " + str(current_room.shown_cards[index].health), True, (0, 0, 0))
-            lbl_attack = font.render("Attack: " + str(current_room.shown_cards[index].attack), True, (0, 0, 0))
-            lbl_block = font.render("Block: " + str(current_room.shown_cards[index].block), True, (0, 0, 0))
-            lbl_poison = font.render("Poison: " + str(current_room.shown_cards[index].poison), True, (0, 0, 0))
-            lbl_blood = font.render("Blood: " + str(current_room.shown_cards[index].blood), True, (0, 0, 0))
-            lbl_crit = font.render("Crit: " + str(current_room.shown_cards[index].crit), True, (0, 0, 0))
-            screen.blit(lbl_health, lbl_health.get_rect(center=(slot.rect.centerx,
+            if current_room.shown_cards[index].health_operation in ("-", "/"):
+                lbl_health = font.render("Health: " + str(current_room.shown_cards[index].health_operation)+" "+ str(current_room.shown_cards[index].health), True, (200, 50, 50))
+            else:  
+                lbl_health = font.render("Health: " + str(current_room.shown_cards[index].health_operation)+" "+ str(current_room.shown_cards[index].health), True, (0, 0, 0))
+            if current_room.shown_cards[index].attack_operation in ("-", "/"):
+                lbl_attack = font.render("Attack: " + str(current_room.shown_cards[index].attack_operation)+" "+ str(current_room.shown_cards[index].attack), True, (200, 50, 50))
+            else:
+                lbl_attack = font.render("Attack: " + str(current_room.shown_cards[index].attack_operation)+" "+ str(current_room.shown_cards[index].attack), True, (0, 0, 0))
+            if current_room.shown_cards[index].block_operation in ("-", "/"):
+                lbl_block = font.render("Block: " + str(current_room.shown_cards[index].block_operation) +" "+ str(current_room.shown_cards[index].block), True, (200, 50, 50))
+            else:
+                 lbl_block = font.render("Block: " + str(current_room.shown_cards[index].block_operation) +" "+ str(current_room.shown_cards[index].block), True, (0, 0, 0))   
+            if current_room.shown_cards[index].poison_operation in ("-", "/"):
+                lbl_poison = font.render("Poison: " + str(current_room.shown_cards[index].poison_operation) +" "+ str(current_room.shown_cards[index].poison), True, (200, 50, 50))
+            else:
+                lbl_poison = font.render("Poison: " + str(current_room.shown_cards[index].poison_operation) +" "+ str(current_room.shown_cards[index].poison), True, (0, 0, 0))
+            if current_room.shown_cards[index].blood_operation in ("-", "/"):
+                lbl_blood = font.render("Blood: "+ str(current_room.shown_cards[index].blood_operation) + " "+str(current_room.shown_cards[index].blood), True, (200, 50, 50))
+            else:
+                lbl_blood = font.render("Blood: "+ str(current_room.shown_cards[index].blood_operation) + " "+str(current_room.shown_cards[index].blood), True, (0, 0, 0))
+            if current_room.shown_cards[index].crit_operation in ("-", "/"):
+                lbl_crit = font.render("Crit: " + str(current_room.shown_cards[index].crit_operation)+" "+ str(current_room.shown_cards[index].crit), True, (200, 50, 50))
+            else:
+                lbl_crit = font.render("Crit: " + str(current_room.shown_cards[index].crit_operation)+" "+ str(current_room.shown_cards[index].crit), True, (0, 0, 0))
+            if current_room.shown_cards[index].health != 0:
+                screen.blit(lbl_health, lbl_health.get_rect(center=(slot.rect.centerx,
                                                   slot.rect.y + 100)))
-            screen.blit(lbl_attack, lbl_attack.get_rect(center=(slot.rect.centerx,
+            if current_room.shown_cards[index].attack != 0:
+                screen.blit(lbl_attack, lbl_attack.get_rect(center=(slot.rect.centerx,
                                                   slot.rect.y + 130)))
-            screen.blit(lbl_block, lbl_block.get_rect(center=(slot.rect.centerx,
+            if current_room.shown_cards[index].block != 0:
+                screen.blit(lbl_block, lbl_block.get_rect(center=(slot.rect.centerx,
                                                   slot.rect.y + 160)))
-            screen.blit(lbl_poison, lbl_poison.get_rect(center=(slot.rect.centerx,
+            if current_room.shown_cards[index].poison != 0:
+                screen.blit(lbl_poison, lbl_poison.get_rect(center=(slot.rect.centerx,
                                                   slot.rect.y + 190)))
-            screen.blit(lbl_blood, lbl_blood.get_rect(center=(slot.rect.centerx,
+            if current_room.shown_cards[index].blood != 0:
+                screen.blit(lbl_blood, lbl_blood.get_rect(center=(slot.rect.centerx,
                                                   slot.rect.y + 220)))
-            screen.blit(lbl_crit, lbl_crit.get_rect(center=(slot.rect.centerx,
+            if current_room.shown_cards[index].crit != 0:
+                screen.blit(lbl_crit, lbl_crit.get_rect(center=(slot.rect.centerx,
                                                   slot.rect.y + 250)))
-
+        #Gesammtschaden der KArten aussrechenen
+        final_health,final_crit,final_damage = current_room.attack()
+        game_manager.room.draw_room_result(screen,final_health,final_damage,final_crit)
         pygame.display.flip()
         clock.tick(60)
 

@@ -34,7 +34,8 @@ class GameManager:
             health=char_data["health"],
             damage=char_data["damage"],
             money=char_data["money"],
-            start_deck=cards
+            start_deck=cards,
+            Grafiken_path=char_data["Grafiken_path"]
         )
 
     def get_player(self):

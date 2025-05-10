@@ -15,7 +15,7 @@ def screenscale():
     pygame.display.set_caption("Deckbuilder")
     return screen,screen_width,screen_height 
 
-# ladet das HIntergrund bild ein
+# Funktion zum bilder laden
 def bild_laden(path: Path) -> pygame.Surface | None:
     """Versucht, eine Bilddatei zu laden und gibt ein Surface zurück.
     Liefert **None**, falls die Datei nicht existiert oder das Laden scheitert."""
@@ -24,7 +24,7 @@ def bild_laden(path: Path) -> pygame.Surface | None:
         return None
 
     try:
-        return pygame.image.load(path.as_posix()).convert()
+        return pygame.image.load(path.as_posix()).convert_alpha()
     except pygame.error as e:
         print(f"[Warnung] Bild konnte nicht geladen werden: {e}")
         return None
