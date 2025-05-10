@@ -1,61 +1,90 @@
 import sys
 from pathlib import Path
 import pygame
-from Screen_and_Backrounds import screenscale,bild_laden,scale_bg
+
+from Screen_and_Backrounds import screenscale, bild_laden, scale_bg
+from Sounds.Sound import play_bgm, stop_bgm
+import cardslot as hand                      # <– Modul komplett importieren
 from Game.GameManager import GameManager
 
 
-from Sounds.Sound import play_bgm,stop_bgm
-from cardslot import create_hand
-# ──────────────────────────────────────────────────────────────────────────────
-# Hauptprogramm
-# ──────────────────────────────────────────────────────────────────────────────
-
-def main(character_name):
+def main(character_name="warrior"):
     pygame.init()
-    play_bgm("Sounds\Hölenmusik.wav", volume=1.2)
-    screen,screen_width,screen_height = screenscale()
 
-    # ── Hintergrundbilder laden ────────────────────────────────────────────
+    play_bgm(r"Sounds/Hölenmusik.wav", volume=1.0)
+
+    screen, sw, sh = screenscale()
+    screen_rect = screen.get_rect()
+
+    # Hintergrund
     asset_dir = Path(__file__).parent / "Grafiken"
-    ladescreen_orig = bild_laden(asset_dir / "background_sts.png")
-    kampfscreen_orig = bild_laden(asset_dir / "Arena.png")
+    bg_fight_orig = bild_laden(asset_dir / "Arena.png")
+    background = scale_bg((sw, sh), bg_fight_orig)
 
-    # Aktuell angezeigtes Originalbild & skalierte Variante
-    current_orig = kampfscreen_orig
-    background = scale_bg((screen_width, screen_height), current_orig)
+    # Spiellogik initialisieren -------------------------------------------
+    game_manager = GameManager(character_name.lower())
+    game_manager.room.show_next_cards()
+    current_room = game_manager.room
+    current_cards = game_manager.room.shown_cards
+
+    # Karten vorbereiten ----------------------------------------------------
+    blank = pygame.image.load("Grafiken/card.png").convert_alpha()
+    card_imgs = [blank] * 5                       # später echte Artworks hier
+    hand_slots = hand.create_hand(card_imgs, screen_rect, current_room)
 
     clock = pygame.time.Clock()
     running = True
-
-    game_manager = GameManager(character_name.lower())
+    font = pygame.font.SysFont(None, 28, bold=True)
 
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        events = pygame.event.get()               # Liste für Drag-Handling
+        for ev in events:
+            if ev.type == pygame.QUIT:
                 running = False
-
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                 running = False
+            elif ev.type == pygame.VIDEORESIZE:
+                sw, sh = ev.size
+                screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
+                background = scale_bg((sw, sh), bg_fight_orig)
+                # Slots neu layouten:
+                hand_slots = hand.create_hand(card_imgs, screen.get_rect(), current_room)
 
-            elif event.type == pygame.VIDEORESIZE:
-                screen_width, screen_height = event.size
-                screen = pygame.display.set_mode(event.size, pygame.RESIZABLE)
-                background = scale_bg(event.size, current_orig)
+        # Drag & Drop
+        hand.handle_hand_events(events, hand_slots, current_room)
 
-        # ── Zeichnen ────────────────────────────────────────────────────────
-        if background:
-            screen.blit(background, (0, 0))
-        else:
-            screen.fill((30, 30, 30))
+        # ---------------------------- Zeichnen -----------------------------
+        screen.blit(background, (0, 0))
+        hand.draw_hand(screen, hand_slots)
 
+        # Platzhalter-Text auf Karten
+        for index, slot in enumerate(hand_slots):
+            lbl_health = font.render("Health: " + str(current_room.shown_cards[index].health), True, (0, 0, 0))
+            lbl_attack = font.render("Attack: " + str(current_room.shown_cards[index].attack), True, (0, 0, 0))
+            lbl_block = font.render("Block: " + str(current_room.shown_cards[index].block), True, (0, 0, 0))
+            lbl_poison = font.render("Poison: " + str(current_room.shown_cards[index].poison), True, (0, 0, 0))
+            lbl_blood = font.render("Blood: " + str(current_room.shown_cards[index].blood), True, (0, 0, 0))
+            lbl_crit = font.render("Crit: " + str(current_room.shown_cards[index].crit), True, (0, 0, 0))
+            screen.blit(lbl_health, lbl_health.get_rect(center=(slot.rect.centerx,
+                                                  slot.rect.y + 100)))
+            screen.blit(lbl_attack, lbl_attack.get_rect(center=(slot.rect.centerx,
+                                                  slot.rect.y + 130)))
+            screen.blit(lbl_block, lbl_block.get_rect(center=(slot.rect.centerx,
+                                                  slot.rect.y + 160)))
+            screen.blit(lbl_poison, lbl_poison.get_rect(center=(slot.rect.centerx,
+                                                  slot.rect.y + 190)))
+            screen.blit(lbl_blood, lbl_blood.get_rect(center=(slot.rect.centerx,
+                                                  slot.rect.y + 220)))
+            screen.blit(lbl_crit, lbl_crit.get_rect(center=(slot.rect.centerx,
+                                                  slot.rect.y + 250)))
 
         pygame.display.flip()
         clock.tick(60)
 
+    stop_bgm()
     pygame.quit()
     sys.exit()
 
 
 if __name__ == "__main__":
-    main()
+    main("warrior")

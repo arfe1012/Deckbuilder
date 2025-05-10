@@ -7,15 +7,17 @@ CARD_GAP   = 30            # horizontaler Abstand zwischen Karten
 
 class CardSlot:
     """Hält die Surface (Bild) und das Ziel-Rect einer Handkarte."""
-    def __init__(self, surf: pygame.Surface, target_rect: pygame.Rect) -> None:
+    def __init__(self, surf: pygame.Surface, target_rect: pygame.Rect, card) -> None:
         self.surf = surf
         self.target = target_rect      # Slot-Position
         self.rect   = surf.get_rect(center=target_rect.center)  # aktuelle (für Drag)
         self.drag   = False
+        self.card = card
 
-def create_hand(card_imgs: List[pygame.Surface], screen_rect: pygame.Rect) -> List[CardSlot]:
+def create_hand(card_imgs: List[pygame.Surface], screen_rect: pygame.Rect, room) -> List[CardSlot]:
     """Erzeugt fünf Slots und skaliert die Karten herunter."""
     hand_slots: List[CardSlot] = []
+    
     # ── Einheitliche Kartengröße bestimmen ────────────────────────────────
     w0, h0 = card_imgs[0].get_size()
     w, h   = int(w0 * CARD_SCALE), int(h0 * CARD_SCALE)
@@ -27,7 +29,7 @@ def create_hand(card_imgs: List[pygame.Surface], screen_rect: pygame.Rect) -> Li
     for i, img in enumerate(card_imgs[:5]):      # nur 5 Karten
         surf  = pygame.transform.smoothscale(img, (w, h))
         slot_rect = pygame.Rect(start_x + i * (w + CARD_GAP), y, w, h)
-        hand_slots.append(CardSlot(surf, slot_rect))
+        hand_slots.append(CardSlot(surf, slot_rect, room.shown_cards[i]))
     return hand_slots
 
 def draw_hand(screen: pygame.Surface, hand: List[CardSlot]) -> None:
@@ -40,7 +42,7 @@ def draw_hand(screen: pygame.Surface, hand: List[CardSlot]) -> None:
         if slot.drag:
             screen.blit(slot.surf, slot.rect)
 
-def handle_hand_events(events, hand: List[CardSlot]) -> None:
+def handle_hand_events(events, hand: List[CardSlot], room) -> None:
     """Drag-&-Drop-Logik: Karte verschieben & bei Loslassen Reihenfolge tauschen."""
     mouse_pos = pygame.mouse.get_pos()
     dragged_slot = next((s for s in hand if s.drag), None)
@@ -69,7 +71,7 @@ def handle_hand_events(events, hand: List[CardSlot]) -> None:
 
             # Reihenfolge tauschen, falls sinnvoll
             if target_idx is not None and target_idx != origin_idx:
-                hand.insert(target_idx, hand.pop(origin_idx))
+                room.move_card(origin_idx, target_idx)
 
             # Slot auf Ziel-Rect zurückschnappen lassen
             for i, slot in enumerate(hand):

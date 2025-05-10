@@ -9,16 +9,16 @@ class Room:
         self.right_deck = []
 
     def show_next_cards(self):
-        tmp_cards = []
-        for card in self.left_deck[:3]:
-            tmp_cards.append(card)
-        self.shown_cards = tmp_cards
+        for index, card in enumerate(self.left_deck[:5]):
+            self.shown_cards.append(card)
 
     def move_card(self, from_index, to_index):
-        tmp_cards = [0,0,0] #bad, because hardcoded and fixed length
-        tmp_cards[to_index] = self.shown_cards[from_index]
-        tmp_cards[from_index] = self.shown_cards[to_index]
-        self.shown_cards = tmp_cards
+        print("Moving card " + str(from_index) + " to " + str(to_index))
+        tmp_to_index = self.shown_cards[to_index]
+        self.shown_cards[to_index] = self.shown_cards[from_index]
+        self.shown_cards[from_index] = tmp_to_index
+        for card in self.shown_cards:
+            print(card)
 
     def __str__(self):
         return (f"Room:\n"
