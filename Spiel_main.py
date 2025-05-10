@@ -10,7 +10,7 @@ from Game.GameManager import GameManager
 
 def main(character_name="warrior"):
     pygame.init()
-
+    
     play_bgm(r"Sounds/Hölenmusik.wav", volume=1.0)
 
     screen, sw, sh = screenscale()
@@ -43,6 +43,8 @@ def main(character_name="warrior"):
                 running = False
             elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
                 running = False
+            elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_k:
+                current_room.attack()
             elif ev.type == pygame.VIDEORESIZE:
                 sw, sh = ev.size
                 screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
