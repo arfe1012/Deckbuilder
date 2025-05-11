@@ -29,6 +29,7 @@ def main(character_name="warrior"):
     current_cards = game_manager.room.shown_cards
     #Spieler erzeugen---------------------------------
     Spieler = game_manager.get_player()
+
     # Karten vorbereiten ----------------------------------------------------
     blank = pygame.image.load("Grafiken/card.png").convert_alpha()
     card_imgs = [blank] * 5                       # später echte Artworks hier
@@ -60,8 +61,8 @@ def main(character_name="warrior"):
         screen.blit(background, (0, 0))
         hand.draw_hand(screen, hand_slots)
         Spieler.draw_sprite(screen, scale=0.55)#Spieler zeichnen
-
         # Platzhalter-Text auf Karten
+        font=pygame.font.SysFont("Comic Sans MS", 24, bold=False, italic=False)
         for index, slot in enumerate(hand_slots):
             if current_room.shown_cards[index].health_operation in ("-", "/"):
                 lbl_health = font.render("Health: " + str(current_room.shown_cards[index].health_operation)+" "+ str(current_room.shown_cards[index].health), True, (200, 50, 50))
@@ -107,7 +108,7 @@ def main(character_name="warrior"):
                                                   slot.rect.y + 250)))
         #Gesammtschaden der KArten aussrechenen
         final_health,final_crit,final_damage,final_block,final_blood,final_poison = current_room.attack()
-        game_manager.room.draw_room_result(screen,final_health,final_crit,final_damage,final_block,final_poison,final_blood)
+        game_manager.room.draw_room_result(screen,final_health,final_crit,final_damage,final_block,final_poison,final_blood,Spieler.health,Spieler.damage,Spieler.block,Spieler.money)
         pygame.display.flip()
         clock.tick(60)
 

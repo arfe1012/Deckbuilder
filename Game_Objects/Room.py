@@ -78,7 +78,7 @@ class Room:
         if operation == "/":
             return a/b
 
-    
+
     def draw_room_result(self,screen: pygame.Surface,
                         final_health: int,
                         final_damage: int,
@@ -86,20 +86,27 @@ class Room:
                         final_block: int,
                         final_poison:int,
                         final_blood:int,
+                        player_health:int,
+                        player_damage: int,
+                        player_block: int,
+                        player_money:int,
                         x: int = 20,
                         y: int = 20,
                         line_gap: int = 6) -> None:
         
         lines = [
-            f"Health : {round(final_health,2)}",
-            f"Damage : {round(final_damage,2)}",
-            f"Crit   : {round(final_crit,2)}%",
-            f"Block  : {round(final_block,2)}",
+            f"Health : {round(player_health,2)} + this fight  {round(final_health,2)}",
+            f"Damage : {round(player_damage,2)} + this fight  {round(final_damage,2)}",
+            f"Block  : {round(player_block,2)}  + this fight  {round(final_block,2)}",
             f"Poison : {round(final_poison,2)}",
-            f"Blood  : {round(final_blood,2)}"
+            f"Blood  : {round(final_blood,2)}",
+            f"Crit   : {round(final_crit,2)}%",
+            f" ",
+            f"Money : {player_money}"
         ]
-
+        
         y_cursor = y
+        self.Hud_font = pygame.font.SysFont("Comic Sans MS", 24, bold=False, italic=False)
         for line in lines:
             surf = self.Hud_font.render(line, True, self.Hud_color)
             screen.blit(surf, (x, y_cursor))

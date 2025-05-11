@@ -100,13 +100,13 @@ def run_character_select() -> Character | None:
     characters = load_characters(asset_dir)
     layout_characters(characters, screen_rect)
 
-    font_title = pygame.font.SysFont(None, 48, bold=True)
-    font_stats = pygame.font.SysFont(None, 32)
+    font_title = pygame.font.SysFont("Comic Sans MS", 45, bold=True, italic=False)
+    font_stats = pygame.font.SysFont("Comic Sans MS", 24, bold=False, italic=False)
 
     clock = pygame.time.Clock()
     running = True
     hovered: Character | None = None
-
+    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
