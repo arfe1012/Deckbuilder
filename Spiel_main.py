@@ -106,8 +106,8 @@ def main(character_name="warrior"):
                 screen.blit(lbl_crit, lbl_crit.get_rect(center=(slot.rect.centerx,
                                                   slot.rect.y + 250)))
         #Gesammtschaden der KArten aussrechenen
-        final_health,final_crit,final_damage = current_room.attack()
-        game_manager.room.draw_room_result(screen,final_health,final_damage,final_crit)
+        final_health,final_crit,final_damage,final_block,final_blood,final_poison = current_room.attack()
+        game_manager.room.draw_room_result(screen,final_health,final_crit,final_damage,final_block,final_poison,final_blood)
         pygame.display.flip()
         clock.tick(60)
 

@@ -33,6 +33,19 @@ class Room:
         final_crit = 0
         tmp_crit = []
         tmp_crit_operation = []
+
+        final_block = 0
+        tmp_block =[]
+        tmp_block_operation = []
+
+        final_poison = 0
+        tmp_poison = []
+        tmp_poison_operation =[]
+
+        final_blood = 0
+        tmp_blood = []
+        tmp_blood_operation =[]
+
         for card in self.shown_cards:
             tmp_health.append(card.health)
             tmp_health_operation.append(card.health_operation)
@@ -40,11 +53,20 @@ class Room:
             tmp_damage_operation.append(card.attack_operation)
             tmp_crit.append(card.crit)
             tmp_crit_operation.append(card.crit_operation)
+            tmp_block.append(card.block)
+            tmp_block_operation.append(card.block_operation)
+            tmp_poison.append(card.poison)
+            tmp_poison_operation.append(card.poison_operation)
+            tmp_blood.append(card.blood)
+            tmp_blood_operation.append(card.blood_operation)
         for index, value in enumerate(tmp_health):
             final_health = self.make_operation(final_health, tmp_health[index], tmp_health_operation[index])
             final_damage = self.make_operation(final_damage, tmp_damage[index], tmp_damage_operation[index])
             final_crit = self.make_operation(final_crit, tmp_crit[index], tmp_crit_operation[index])
-        return final_health,final_crit,final_damage
+            final_block = self.make_operation(final_block, tmp_block[index], tmp_block_operation[index])
+            final_poison = self.make_operation(final_poison, tmp_poison[index], tmp_poison_operation[index])
+            final_blood = self.make_operation(final_blood, tmp_blood[index], tmp_blood_operation[index])
+        return final_health,final_crit,final_damage,final_block,final_blood,final_poison
         
     def make_operation(self, a, b, operation):
         if operation == "+":
@@ -61,6 +83,9 @@ class Room:
                         final_health: int,
                         final_damage: int,
                         final_crit: int,
+                        final_block: int,
+                        final_poison:int,
+                        final_blood:int,
                         x: int = 20,
                         y: int = 20,
                         line_gap: int = 6) -> None:
@@ -69,6 +94,9 @@ class Room:
             f"Health : {round(final_health,2)}",
             f"Damage : {round(final_damage,2)}",
             f"Crit   : {round(final_crit,2)}%",
+            f"Block  : {round(final_block,2)}",
+            f"Poison : {round(final_poison,2)}",
+            f"Blood  : {round(final_blood,2)}"
         ]
 
         y_cursor = y
