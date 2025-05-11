@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 import pygame
-
 from Screen_and_Backrounds import screenscale, bild_laden, scale_bg
 from Sounds.Sound import play_bgm, stop_bgm,play_sfx
 import cardslot as hand                      # <– Modul komplett importieren
