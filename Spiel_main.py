@@ -107,7 +107,7 @@ def main(character_name="warrior"):
                                                   slot.rect.y + 250)))
         #Gesammtschaden der KArten aussrechenen
         final_health,final_crit,final_damage,final_block,final_blood,final_poison = current_room.attack()
-        game_manager.room.draw_room_result(screen,final_health,final_crit,final_damage,final_block,final_poison,final_blood,Spieler.health,Spieler.damage,Spieler.block,Spieler.money)
+        game_manager.room.draw_room_result(screen,final_health,final_damage,final_crit,final_block,final_poison,final_blood,Spieler.health,Spieler.damage,Spieler.block,Spieler.money)
         pygame.display.flip()
         clock.tick(60)
 
