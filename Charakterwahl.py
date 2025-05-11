@@ -79,32 +79,47 @@ def layout_characters(characters: list[Character], screen_rect: pygame.Rect) -> 
 #---------------------------------------------intro Video, das man mit Leertaste skippen kann.
 def play_intro(path: str | Path, screen: pygame.Surface, clock: pygame.time.Clock) -> None:
     """
-    Spielt Video per MoviePy iter_frames ab. Leertaste überspringt sofort.
+    Spielt Video + Audio per MoviePy ab.
+    Leertaste überspringt sofort beides.
     """
-    clip = VideoFileClip(str(path))
+    clip = VideoFileClip(str(path))  # kein logger-Argument mehr
+
+    # Audio extrahieren (WAV), einmalig
+    audio_path = Path(path).with_suffix('.wav')
+    if not audio_path.exists():
+        clip.audio.write_audiofile(
+            str(audio_path),
+            verbose=False,  # unterdrückt Fortschrittsbalken
+            logger=None     # stillt weitere Logs
+        )
+
+    # Pygame-Mixer starten und Audio abspielen
+    if not pygame.mixer.get_init():
+        pygame.mixer.init()
+    pygame.mixer.music.load(str(audio_path))
+    pygame.mixer.music.play()
+
     fps = clip.fps or 24
     try:
         for frame in clip.iter_frames(fps=fps, dtype="uint8"):
-            # Frame ist ndarray (H, W, 3), BGR -> RGB
-            surf = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
-            # Vollbild
+            surf = pygame.image.frombuffer(frame.tobytes(), frame.shape[1::-1], "RGB")
             surf = pygame.transform.scale(surf, screen.get_size())
             screen.blit(surf, (0, 0))
             pygame.display.flip()
 
-            # Event-Loop zum Skip
             for ev in pygame.event.get():
                 if ev.type == pygame.KEYDOWN and ev.key == pygame.K_SPACE:
+                    pygame.mixer.music.stop()
                     return
                 if ev.type == pygame.QUIT:
+                    pygame.mixer.music.stop()
                     pygame.quit()
                     sys.exit()
 
             clock.tick(fps)
     finally:
-        clip.reader.close()
-        if clip.audio:
-            clip.audio.reader.close_proc()
+        pygame.mixer.music.stop()
+        clip.close()
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Haupt‑Loop
@@ -113,14 +128,13 @@ def play_intro(path: str | Path, screen: pygame.Surface, clock: pygame.time.Cloc
 def run_character_select() -> Character | None:
     pygame.init()
 
-    play_bgm("Sounds\game soundtrack 2.wav", volume=0.4)
     screen,screen_width,screen_height = screenscale()
     clock = pygame.time.Clock()
     # Intro-Video vor dem Menü
-    intro_path = Path(__file__).parent / "assets" / "intro.mp4"
+    intro_path = Path(__file__).parent / "Videos" / "intro.mp4"
     if intro_path.exists():
         play_intro(intro_path, screen, clock)
-
+    play_bgm("Sounds\game soundtrack 2.wav", volume=1)
     # ── Hintergrundbilder laden ────────────────────────────────────────────
     asset_dir = Path(__file__).parent / "Grafiken"
     ladescreen_orig = bild_laden(asset_dir / "background_sts.png")
