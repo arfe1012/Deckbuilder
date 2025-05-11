@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 from Screen_and_Backrounds import  bild_laden
 class Player:
-    def __init__(self, name, health, damage, money, start_deck,Grafiken_path):
+    def __init__(self, name, health, damage, money, start_deck,Grafiken_path,block):
         self.name = name
         self.health = health
         self.damage = damage
@@ -11,6 +11,7 @@ class Player:
         self.start_deck = start_deck
         self.grafiken_path = Path(Grafiken_path)
         self._sprite: Optional[pygame.Surface] = None
+        self.block = block
     def draw_sprite(self,
                 screen: pygame.Surface,
                 *,
@@ -48,4 +49,4 @@ class Player:
 
     def __str__(self):
         return (f"Player(name={self.name}, health={self.health}, damage={self.damage}, "
-                f"money={self.money}, start_deck=[…], Grafiken_path={self.Grafiken_path!r})")
+                f"money={self.money}, start_deck=[…], Grafiken_path={self.Grafiken_path!r}),block={self.block}")

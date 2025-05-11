@@ -3,6 +3,7 @@
       "health": 70,
       "damage": 30,
       "money": 80,
+      "block":0,
       "Grafiken_path":"Grafiken/char_attack_0.png",
       "start_deck": [
         {"attack": 4, "attack_operation": "+", "health": 2, "health_operation": "+", "block": 0, "block_operation": "+", "poison": 0, "poison_operation": "+", "blood": 4, "blood_operation": "+", "crit": 5, "crit_operation": "+"},
@@ -26,6 +27,7 @@
       "health": 90,
       "damage": 15,
       "money": 40,
+      "block":0,
       "Grafiken_path":"Grafiken/char_attack_1.png",
       "start_deck": [
           { "attack": 6, "attack_operation": "+", "health": 1, "health_operation": "+","block": 0, "block_operation": "+", "poison": 2, "poison_operation": "+","blood": 0, "blood_operation": "+", "crit": 8, "crit_operation": "+" },
@@ -50,13 +52,14 @@
       "health": 130,
       "damage": 20,
       "money": 60,
+      "block":0,
       "Grafiken_path":"Grafiken/char_attack_2.png",
       "start_deck": [
         { "attack": 2, "attack_operation": "+", "health": 3, "health_operation": "+","block": 2, "block_operation": "+", "poison": 0, "poison_operation": "+","blood": 1, "blood_operation": "+", "crit": 8,  "crit_operation": "+" },
         { "attack": 6, "attack_operation": "*", "health": 1, "health_operation": "+","block": 0, "block_operation": "+", "poison": 0, "poison_operation": "+","blood": 0, "blood_operation": "+", "crit": 0,  "crit_operation": "+" },
         { "attack": 4, "attack_operation": "+", "health": 0, "health_operation": "+","block": 1, "block_operation": "+", "poison": 3, "poison_operation": "+","blood": 0, "blood_operation": "+", "crit": 4,  "crit_operation": "+" },
         { "attack": 7, "attack_operation": "-", "health": 2, "health_operation": "-","block": 0, "block_operation": "-", "poison": 0, "poison_operation": "-","blood": 0, "blood_operation": "-", "crit": 6,  "crit_operation": "-" },
-        { "attack": 5, "attack_operation": "/", "health": 1, "health_operation": "/","block": 0, "block_operation": "/", "poison": 4, "poison_operation": "/","blood": 0, "blood_operation": "/", "crit": 5,  "crit_operation": "/" },
+        { "attack": 5, "attack_operation": "/", "health": 1, "health_operation": "/","block": 1, "block_operation": "/", "poison": 4, "poison_operation": "/","blood": 0, "blood_operation": "-", "crit": 5,  "crit_operation": "/" },
         { "attack": 3, "attack_operation": "+", "health": 4, "health_operation": "+","block": 1, "block_operation": "+", "poison": 0, "poison_operation": "+","blood": 1, "blood_operation": "+", "crit": 10, "crit_operation": "+" },
         { "attack": 4, "attack_operation": "*", "health": 0, "health_operation": "+","block": 2, "block_operation": "*", "poison": 0, "poison_operation": "+","blood": 0, "blood_operation": "+", "crit": 2,  "crit_operation": "*" },
         { "attack": 6, "attack_operation": "+", "health": 0, "health_operation": "+","block": 0, "block_operation": "+", "poison": 2, "poison_operation": "+","blood": 0, "blood_operation": "+", "crit": 7,  "crit_operation": "+" },
@@ -74,6 +77,7 @@
       "health": 120,
       "damage": 18,
       "money": 50,
+      "block":0,
       "Grafiken_path":"Grafiken/char_attack_3.png",
 "start_deck": [
   { "attack": 5, "attack_operation": "+", "health": 1, "health_operation": "+","block": 2, "block_operation": "+", "poison": 0, "poison_operation": "+","blood": 1, "blood_operation": "+", "crit": 6,  "crit_operation": "+" },
