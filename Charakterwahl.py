@@ -150,7 +150,8 @@ def run_character_select() -> Character | None:
             panel_h = 28 + line_h * (len(stats_lines) + 1)
 
             panel_rect = pygame.Rect(0, 0, panel_w, panel_h)
-            panel_rect.midbottom = (screen_rect.centerx, screen_rect.bottom - 30)
+            padding = 10  # frei wählbarer Abstand in Pixeln
+            panel_rect.midtop = (hovered.rect.centerx, hovered.rect.bottom + padding)
 
             # Halbtransparente Fläche, KEIN sichtbarer Rahmen
             panel_surf = pygame.Surface(panel_rect.size, pygame.SRCALPHA)
