@@ -15,7 +15,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 from dataclasses import dataclass
-
+from moviepy.video.io.VideoFileClip import VideoFileClip
 import pygame
 from Screen_and_Backrounds import screenscale, bild_laden, scale_bg
 from Spiel_main import main
@@ -76,6 +76,35 @@ def layout_characters(characters: list[Character], screen_rect: pygame.Rect) -> 
         char.image = scale_bg((img_w, img_h), char.image)
         x += img_w + gap
 
+#---------------------------------------------intro Video, das man mit Leertaste skippen kann.
+def play_intro(path: str | Path, screen: pygame.Surface, clock: pygame.time.Clock) -> None:
+    """
+    Spielt Video per MoviePy iter_frames ab. Leertaste überspringt sofort.
+    """
+    clip = VideoFileClip(str(path))
+    fps = clip.fps or 24
+    try:
+        for frame in clip.iter_frames(fps=fps, dtype="uint8"):
+            # Frame ist ndarray (H, W, 3), BGR -> RGB
+            surf = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
+            # Vollbild
+            surf = pygame.transform.scale(surf, screen.get_size())
+            screen.blit(surf, (0, 0))
+            pygame.display.flip()
+
+            # Event-Loop zum Skip
+            for ev in pygame.event.get():
+                if ev.type == pygame.KEYDOWN and ev.key == pygame.K_SPACE:
+                    return
+                if ev.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            clock.tick(fps)
+    finally:
+        clip.reader.close()
+        if clip.audio:
+            clip.audio.reader.close_proc()
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Haupt‑Loop
@@ -83,8 +112,14 @@ def layout_characters(characters: list[Character], screen_rect: pygame.Rect) -> 
 
 def run_character_select() -> Character | None:
     pygame.init()
+
     play_bgm("Sounds\game soundtrack 2.wav", volume=0.4)
     screen,screen_width,screen_height = screenscale()
+    clock = pygame.time.Clock()
+    # Intro-Video vor dem Menü
+    intro_path = Path(__file__).parent / "assets" / "intro.mp4"
+    if intro_path.exists():
+        play_intro(intro_path, screen, clock)
 
     # ── Hintergrundbilder laden ────────────────────────────────────────────
     asset_dir = Path(__file__).parent / "Grafiken"
@@ -103,7 +138,6 @@ def run_character_select() -> Character | None:
     font_title = pygame.font.SysFont("Comic Sans MS", 45, bold=True, italic=False)
     font_stats = pygame.font.SysFont("Comic Sans MS", 24, bold=False, italic=False)
 
-    clock = pygame.time.Clock()
     running = True
     hovered: Character | None = None
     
