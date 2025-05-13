@@ -89,7 +89,6 @@ def play_intro(path: str | Path, screen: pygame.Surface, clock: pygame.time.Cloc
     if not audio_path.exists():
         clip.audio.write_audiofile(
             str(audio_path),
-            verbose=False,  # unterdrückt Fortschrittsbalken
             logger=None     # stillt weitere Logs
         )
 
@@ -131,7 +130,7 @@ def run_character_select() -> Character | None:
     screen,screen_width,screen_height = screenscale()
     clock = pygame.time.Clock()
     # Intro-Video vor dem Menü
-    intro_path = Path(__file__).parent / "Videos" / "intro.mp4"
+    intro_path = Path(__file__).parent / "Videos" / "introo.mp4"
     if intro_path.exists():
         play_intro(intro_path, screen, clock)
     play_bgm("Sounds\game soundtrack 2.wav", volume=1)
