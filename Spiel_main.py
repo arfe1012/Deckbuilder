@@ -11,7 +11,7 @@ def main(character_name="warrior"):
     pygame.init()
     # HUD_FONT = pygame.font.SysFont(None, 32, bold=True)
     # HUD_COLOR = (250, 240, 200)            # helles Beige, gut lesbar
-    play_bgm(r"Sounds/Hölenmusik.wav", volume=1.0)
+    play_bgm(Path("Sounds") / "Hölenmusik.wav", volume=1.0)
 
     screen, sw, sh = screenscale()
     screen_rect = screen.get_rect()
@@ -43,9 +43,12 @@ def main(character_name="warrior"):
         for ev in events:
             if ev.type == pygame.QUIT:
                 running = False
-            elif ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                running = False
-                
+            elif ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_ESCAPE:
+                    running = False
+                elif ev.key == pygame.K_a:  # Check if "A" key is pressed
+                    # Wenn "A" gedrückt wird, dann Angreifen
+                    current_room.player_turn()
             elif ev.type == pygame.VIDEORESIZE:
                 sw, sh = ev.size
                 screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
@@ -59,7 +62,7 @@ def main(character_name="warrior"):
         # ---------------------------- Zeichnen -----------------------------
         screen.blit(background, (0, 0))
         hand.draw_hand(screen, hand_slots)
-        Spieler.draw_sprite(screen, scale=0.55)#Spieler zeichnen
+        Spieler.draw_sprite(screen, scale=0.55) #Spieler zeichnen
         # Platzhalter-Text auf Karten
         font=pygame.font.SysFont("Comic Sans MS", 24, bold=False, italic=False)
         for index, slot in enumerate(hand_slots):
@@ -105,9 +108,7 @@ def main(character_name="warrior"):
             if current_room.shown_cards[index].crit != 0:
                 screen.blit(lbl_crit, lbl_crit.get_rect(center=(slot.rect.centerx,
                                                   slot.rect.y + 250)))
-        #Gesammtschaden der KArten aussrechenen
-        final_health,final_crit,final_damage,final_block,final_blood,final_poison = current_room.attack()
-        game_manager.room.draw_room_result(screen,final_health,final_damage,final_crit,final_block,final_poison,final_blood,Spieler.health,Spieler.damage,Spieler.block,Spieler.money)
+        game_manager.room.draw_room_result(screen)
         pygame.display.flip()
         clock.tick(60)
 

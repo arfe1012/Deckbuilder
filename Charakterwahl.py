@@ -133,7 +133,9 @@ def run_character_select() -> Character | None:
     intro_path = Path(__file__).parent / "Videos" / "introo.mp4"
     if intro_path.exists():
         play_intro(intro_path, screen, clock)
-    play_bgm("Sounds\game soundtrack 2.wav", volume=1)
+    play_bgm(Path("Sounds") / "game soundtrack 2.wav", volume=1)
+
+    
     # ── Hintergrundbilder laden ────────────────────────────────────────────
     asset_dir = Path(__file__).parent / "Grafiken"
     ladescreen_orig = bild_laden(asset_dir / "background_sts.png")
@@ -173,7 +175,7 @@ def run_character_select() -> Character | None:
                         break
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and hovered:
                 # Charakter gewählt → zurückgeben
-                play_sfx("Sounds\card_back.wav", volume=1)
+                play_sfx(Path("Sounds") / "card_back.wav", volume=1)
                 return hovered
 
         # ── Zeichnen ────────────────────────────────────────────────────────

@@ -8,6 +8,7 @@ class Room:
         self.left_deck = player.start_deck
         self.shown_cards = []
         self.right_deck = []
+        self.round = 1
         self.Hud_font = HUD_FONT = pygame.font.SysFont(None, 32, bold=True)
         self.Hud_color = HUD_COLOR = (250, 240, 200)  
 
@@ -21,7 +22,8 @@ class Room:
         self.shown_cards[to_index] = self.shown_cards[from_index]
         self.shown_cards[from_index] = tmp_to_index
 
-    def attack(self):
+    def player_turn(self) -> None:
+        print("Player turn")
         final_health = 0
         tmp_health = []
         tmp_health_operation = []
@@ -66,7 +68,24 @@ class Room:
             final_block = self.make_operation(final_block, tmp_block[index], tmp_block_operation[index])
             final_poison = self.make_operation(final_poison, tmp_poison[index], tmp_poison_operation[index])
             final_blood = self.make_operation(final_blood, tmp_blood[index], tmp_blood_operation[index])
-        return final_health,final_crit,final_damage,final_block,final_blood,final_poison
+        
+        self.player.update_stats(heal_amount = final_health, block_amount = final_block, 
+                                 crit_amount = final_crit, damage_amount = final_damage, 
+                                 blood_amount = final_blood, poison_amount = final_poison)
+        self.player.attack(self.enemy)
+
+        if self.check_if_enemy_alive():
+            print("Enemy died in round", self.round)
+        else:
+            print("Enemy is alive")
+            # Enemy attacks player
+            self.enemy.attack(self.player)
+            if self.check_if_player_alive():
+                print("Player died in round", self.round)
+            else:
+                print("Player is alive")
+        self.round += 1
+        # TODO Reset the shown cards for the next round
         
     def make_operation(self, a, b, operation):
         if operation == "+":
@@ -78,36 +97,61 @@ class Room:
         if operation == "/":
             return a/b
 
+    def check_if_enemy_alive(self):
+        if self.enemy.alive == False:
+            return False
+        else:
+            self.player.money += self.enemy.reward
+            return True
+    
+    def check_if_player_alive(self):
+        if self.player.health <= 0:
+            return False
+        else:
+            return True
 
     def draw_room_result(self,screen: pygame.Surface,
-                        final_health: int,
-                        final_damage: int,
-                        final_crit: int,
-                        final_block: int,
-                        final_poison:int,
-                        final_blood:int,
-                        player_health:int,
-                        player_damage: int,
-                        player_block: int,
-                        player_money:int,
                         x: int = 20,
                         y: int = 20,
                         line_gap: int = 6) -> None:
         
-        lines = [
-            f"Health : {round(player_health,2)} + this fight  {round(final_health,2)}",
-            f"Damage : {round(player_damage,2)} + this fight  {round(final_damage,2)}",
-            f"Block  : {round(player_block,2)}  + this fight  {round(final_block,2)}",
-            f"Poison : {round(final_poison,2)}",
-            f"Blood  : {round(final_blood,2)}",
-            f"Crit   : {round(final_crit,2)}%",
+        # Show player stats
+        lines_player = [
+            f"Health : {round(self.player.health,2)} + this fight  {round(self.player.last_health_increase,2)}",
+            f"Damage : {round(self.player.damage,2)} + this fight  {round(self.player.last_damage_increase,2)}",
+            f"Block  : {round(self.player.block,2)}",
+            f"Poison : {round(self.player.poison,2)}",
+            f"Blood  : {round(self.player.blood,2)}",
+            f"Crit   : {round(self.player.crit,2)}%",
             f" ",
-            f"Money : {player_money}"
+            f"Money : {self.player.money}"
         ]
         
+        # Show current round
+        self.Hud_font = pygame.font.SysFont("Comic Sans MS", 36, bold=True, italic=True)
+        round_text = f"Round: {self.round}"
+        surf = self.Hud_font.render(round_text, True, self.Hud_color)
+        screen.blit(surf, (screen.get_width() // 2, y))
+
+        # Show player stats
         y_cursor = y
         self.Hud_font = pygame.font.SysFont("Comic Sans MS", 24, bold=False, italic=False)
-        for line in lines:
+        for line in lines_player:
+            surf = self.Hud_font.render(line, True, self.Hud_color)
+            screen.blit(surf, (x, y_cursor))
+            y_cursor += surf.get_height() + line_gap
+
+        # Show enemy stats
+        lines_enemy = [
+            f"Enemy: {self.enemy.name}",
+            f"Health : {round(self.enemy.health,2)}",
+            f"Damage : {round(self.enemy.damage,2)}",
+            f"Reward : {self.enemy.reward}"
+        ]
+
+        x = screen.get_width() - 250
+        y_cursor = y
+        for line in lines_enemy:
             surf = self.Hud_font.render(line, True, self.Hud_color)
             screen.blit(surf, (x, y_cursor))
             y_cursor += surf.get_height() + line_gap
