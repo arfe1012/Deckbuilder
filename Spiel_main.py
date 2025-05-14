@@ -38,6 +38,17 @@ def main(character_name="warrior"):
     running = True
     font = pygame.font.SysFont(None, 28, bold=True)
 
+    #___________________________Attackkonopf
+    attack_btn_font = pygame.font.SysFont("Comic Sans MS", 24, bold=True)
+    attack_btn_text = attack_btn_font.render("Attack", True, (255,255,255))
+    attack_btn_padding = 10
+    btn_w = attack_btn_text.get_width() + 2*attack_btn_padding
+    btn_h = attack_btn_text.get_height() + 2*attack_btn_padding
+    # Position des Buttons
+    btn_x = sw - btn_w - 100
+    btn_y = 720
+    attack_btn_rect = pygame.Rect(btn_x, btn_y, btn_w, btn_h)
+    #________________________________________________________________________
     while running:
         events = pygame.event.get()               # Liste für Drag-Handling
         for ev in events:
@@ -46,9 +57,11 @@ def main(character_name="warrior"):
             elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_ESCAPE:
                     running = False
-                elif ev.key == pygame.K_a:  # Check if "A" key is pressed
-                    # Wenn "A" gedrückt wird, dann Angreifen
+            elif ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
+            # Klick-IN-Button?
+                if attack_btn_rect.collidepoint(ev.pos):
                     current_room.player_turn()
+                    play_sfx("Sounds/card_back.wav", volume=0.8)
             elif ev.type == pygame.VIDEORESIZE:
                 sw, sh = ev.size
                 screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
@@ -64,6 +77,16 @@ def main(character_name="warrior"):
         hand.draw_hand(screen, hand_slots)
         Spieler.draw_sprite(screen, scale=0.55) #Spieler zeichnen
         game_manager.room.enemy.draw_sprite(screen,scale=0.55)
+        #------------------ Agriffsbutton zeichen----------
+        pygame.draw.rect(screen, (255, 0, 0, 128), attack_btn_rect, border_radius=8)
+        # 2) leicht hellere Umrandung
+        pygame.draw.rect(screen, (200,200,200), attack_btn_rect, width=2, border_radius=8)
+        # 3) Text zentriert in Button
+        text_x = attack_btn_rect.x + attack_btn_padding
+        text_y = attack_btn_rect.y + attack_btn_padding
+        screen.blit(attack_btn_text, (text_x, text_y))
+        #______________________________________________________
+
         # Platzhalter-Text auf Karten
         font=pygame.font.SysFont("Comic Sans MS", 24, bold=False, italic=False)
         for index, slot in enumerate(hand_slots):
