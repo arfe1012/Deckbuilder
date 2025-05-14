@@ -4,7 +4,7 @@ import pygame
 class Room:
     def __init__(self, player):
         self.player = player
-        self.enemy = Enemy(name = "Silas", health = 100, damage = 10, reward = 1000)
+        self.enemy = Enemy(name = "Silas", health = 100, damage = 10, reward = 1000,Grafiken_path="Grafiken\enemy_1.png")
         self.left_deck = player.start_deck
         self.shown_cards = []
         self.right_deck = []

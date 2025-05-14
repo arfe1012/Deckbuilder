@@ -28,7 +28,7 @@ def main(character_name="warrior"):
     current_cards = game_manager.room.shown_cards
     #Spieler erzeugen---------------------------------
     Spieler = game_manager.get_player()
-
+    
     # Karten vorbereiten ----------------------------------------------------
     blank = pygame.image.load("Grafiken/card.png").convert_alpha()
     card_imgs = [blank] * 5                       # später echte Artworks hier
@@ -63,6 +63,7 @@ def main(character_name="warrior"):
         screen.blit(background, (0, 0))
         hand.draw_hand(screen, hand_slots)
         Spieler.draw_sprite(screen, scale=0.55) #Spieler zeichnen
+        game_manager.room.enemy.draw_sprite(screen,scale=0.55)
         # Platzhalter-Text auf Karten
         font=pygame.font.SysFont("Comic Sans MS", 24, bold=False, italic=False)
         for index, slot in enumerate(hand_slots):
