@@ -132,6 +132,7 @@ def main(character_name="warrior"):
             if current_room.shown_cards[index].crit != 0:
                 screen.blit(lbl_crit, lbl_crit.get_rect(center=(slot.rect.centerx,
                                                   slot.rect.y + 250)))
+        game_manager.room.calculate_card_effects()
         game_manager.room.draw_room_result(screen)
         pygame.display.flip()
         clock.tick(60)

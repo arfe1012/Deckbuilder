@@ -6,13 +6,12 @@ class Player:
     def __init__(self, name, health, damage, money, start_deck, Grafiken_path, block):
         self.name = name
         self.health = health
-        self.last_health_increase = 0
         self.damage = damage
-        self.last_damage_increase = 0
         self.block = block
         self.crit = 0
         self.poison = 0
         self.blood = 0
+        self.card_stats = {}
         self.money = money
         self.start_deck = start_deck
         self.grafiken_path = Path(Grafiken_path)
@@ -23,16 +22,15 @@ class Player:
                      blood_amount: int, poison_amount: int) -> None:
         """Updatet die Spieler Stats wenn Karten bestätigt werden."""
         self.health += heal_amount
-        self.last_health_increase = heal_amount
-        self.damage += damage_amount
-        self.last_damage_increase = damage_amount
-        self.block = block_amount
-        self.crit = crit_amount
-        self.blood = blood_amount
-        self.poison = poison_amount
+        self.card_stats["damage"] = damage_amount
+        self.card_stats["block"] = block_amount
+        self.card_stats["crit"] = crit_amount
+        self.card_stats["blood"] = blood_amount
+        self.card_stats["poison"] = poison_amount
 
     def attack(self, enemy):
-        enemy.take_damage(self.damage)
+        enemy.take_damage(self.damage + self.card_stats["damage"])
+        # TODO Hier noch crit, blood, poison und block einfügen
 
     def take_damage(self, amount: int) -> None:
         """Verringert die Lebenspunkte des Spielers."""

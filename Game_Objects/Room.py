@@ -1,20 +1,28 @@
 from Game_Objects.Enemy import Enemy
 import pygame
+from pathlib import Path
 
 class Room:
     def __init__(self, player):
         self.player = player
-        self.enemy = Enemy(name = "Silas", health = 1000, damage = 10, reward = 1000,Grafiken_path="Grafiken\enemy_1.png")
+        self.enemy = Enemy(name = "Silas", health = 1000, damage = 10, reward = 1000,Grafiken_path= Path("Grafiken") / "enemy_1.png")
         self.left_deck = player.start_deck
         self.shown_cards = []
         self.right_deck = []
+        self.show_cards_stats = {}
         self.round = 1
         self.Hud_font = HUD_FONT = pygame.font.SysFont(None, 32, bold=True)
         self.Hud_color = HUD_COLOR = (250, 240, 200)  
 
     def show_next_cards(self):
+        if len(self.left_deck) < 5:
+            print("Not enough cards in the deck, moving right deck to left deck")
+            self.left_deck = self.right_deck
+            self.right_deck = []
         for index, card in enumerate(self.left_deck[:5]):
             self.shown_cards.append(card)
+            card.played = True
+            self.left_deck.remove(card)
 
     def move_card(self, from_index, to_index):
         
@@ -22,8 +30,7 @@ class Room:
         self.shown_cards[to_index] = self.shown_cards[from_index]
         self.shown_cards[from_index] = tmp_to_index
 
-    def player_turn(self) -> None:
-        print("Player turn")
+    def calculate_card_effects(self):
         final_health = 0
         tmp_health = []
         tmp_health_operation = []
@@ -68,15 +75,22 @@ class Room:
             final_block = self.make_operation(final_block, tmp_block[index], tmp_block_operation[index])
             final_poison = self.make_operation(final_poison, tmp_poison[index], tmp_poison_operation[index])
             final_blood = self.make_operation(final_blood, tmp_blood[index], tmp_blood_operation[index])
+        self.show_cards_stats["health"] = final_health
+        self.show_cards_stats["damage"] = final_damage
+        self.show_cards_stats["block"] = final_block
+        self.show_cards_stats["poison"] = final_poison
+        self.show_cards_stats["blood"] = final_blood
+        self.show_cards_stats["crit"] = final_crit
+
+    def player_turn(self) -> None:
+        print("Player turn")
         
-        self.player.update_stats(heal_amount = final_health, block_amount = final_block, 
-                                 crit_amount = final_crit, damage_amount = final_damage, 
-                                 blood_amount = final_blood, poison_amount = final_poison)
+        self.player.update_stats(heal_amount = self.show_cards_stats["health"], block_amount = self.show_cards_stats["block"], 
+                                 crit_amount = self.show_cards_stats["crit"], damage_amount = self.show_cards_stats["damage"], 
+                                 blood_amount = self.show_cards_stats["blood"], poison_amount = self.show_cards_stats["poison"])
         self.player.attack(self.enemy)
 
         if self.check_if_enemy_alive():
-            print("Enemy died in round", self.round)
-        else:
             print("Enemy is alive")
             # Enemy attacks player
             self.enemy.attack(self.player)
@@ -84,8 +98,11 @@ class Room:
                 print("Player died in round", self.round)
             else:
                 print("Player is alive")
+            print("Enemy died in round", self.round)
+        else:
+            print("Enemy died in round", self.round)
         self.round += 1
-        # TODO Reset the shown cards for the next round
+        self.drop_played_cards()
         
     def make_operation(self, a, b, operation):
         if operation == "+":
@@ -110,6 +127,14 @@ class Room:
         else:
             return True
 
+    def drop_played_cards(self):
+        for card in self.shown_cards:
+            if card.played == True:
+                self.right_deck.append(card)
+                self.shown_cards.remove(card)
+        # TODO Reset the shown cards for the next round
+        self.show_next_cards() 
+    
     def draw_room_result(self,screen: pygame.Surface,
                         x: int = 20,
                         y: int = 20,
@@ -117,12 +142,12 @@ class Room:
         
         # Show player stats
         lines_player = [
-            f"Health : {round(self.player.health,2)} + this fight  {round(self.player.last_health_increase,2)}",
-            f"Damage : {round(self.player.damage,2)} + this fight  {round(self.player.last_damage_increase,2)}",
-            f"Block  : {round(self.player.block,2)}",
-            f"Poison : {round(self.player.poison,2)}",
-            f"Blood  : {round(self.player.blood,2)}",
-            f"Crit   : {round(self.player.crit,2)}%",
+            f"Health : {round(self.player.health,2)} + this fight  {round(self.show_cards_stats['health'],2)}",
+            f"Damage : {round(self.player.damage,2)} + this fight  {round(self.show_cards_stats['damage'],2)}",
+            f"Block  : {round(self.show_cards_stats['block'],2)}",
+            f"Poison : {round(self.show_cards_stats['poison'],2)}",
+            f"Blood  : {round(self.show_cards_stats['blood'],2)}",
+            f"Crit   : {round(self.show_cards_stats['crit'],2)}%",
             f" ",
             f"Money : {self.player.money}"
         ]

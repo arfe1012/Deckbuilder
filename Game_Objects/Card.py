@@ -12,6 +12,7 @@ class Card:
         self.blood_operation = blood_operation
         self.crit = crit
         self.crit_operation = crit_operation
+        self.played = False
 
     def __str__(self) -> str:
         # sorgt dafür, dass auch zukünftige Attribute automatisch angezeigt werden
