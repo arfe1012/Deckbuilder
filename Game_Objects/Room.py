@@ -1,11 +1,12 @@
 from Game_Objects.Enemy import Enemy
 import pygame
+import random
 from pathlib import Path
 
 class Room:
     def __init__(self, player):
         self.player = player
-        self.enemy = Enemy(name = "Silas", health = 1000, damage = 10, reward = 1000,Grafiken_path= Path("Grafiken") / "enemy_1.png")
+        self.enemy = Enemy(name = "Silas", health = 200, damage = 10, reward = 1000,Grafiken_path= Path("Grafiken") / "enemy_1.png",Block=10,possible_damage=[0,1,2,3,4,5,6,7,8,9,10],possible_block=[0,1,2,3,4,5,6,7,8,9,10])
         self.left_deck = player.start_deck
         self.shown_cards = []
         self.right_deck = []
@@ -116,9 +117,9 @@ class Room:
 
     def check_if_enemy_alive(self):
         if self.enemy.alive == False:
+            self.player.money += self.enemy.reward
             return False
         else:
-            self.player.money += self.enemy.reward
             return True
     
     def check_if_player_alive(self):
@@ -171,6 +172,7 @@ class Room:
             f"Enemy: {self.enemy.name}",
             f"Health : {round(self.enemy.health,2)}",
             f"Damage : {round(self.enemy.damage,2)}",
+            f"Block  : {round(self.enemy.block,2)}",
             f"Reward : {self.enemy.reward}"
         ]
 
@@ -180,7 +182,10 @@ class Room:
             surf = self.Hud_font.render(line, True, self.Hud_color)
             screen.blit(surf, (x, y_cursor))
             y_cursor += surf.get_height() + line_gap
-
+    def give_enemy_random_stats(self):
+        
+        self.enemy.damage = random.choice(self.enemy.possible_damage)
+        self.enemy.block = random.choice(self.enemy.possible_block)
 
 
     def __str__(self):

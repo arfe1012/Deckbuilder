@@ -28,7 +28,8 @@ def main(character_name="warrior"):
     current_cards = game_manager.room.shown_cards
     #Spieler erzeugen---------------------------------
     Spieler = game_manager.get_player()
-    
+    #____________________Gegner Stats__________
+    game_manager.room.give_enemy_random_stats()
     # Karten vorbereiten ----------------------------------------------------
     blank = pygame.image.load("Grafiken/card.png").convert_alpha()
     card_imgs = [blank] * 5                       # später echte Artworks hier
@@ -62,6 +63,7 @@ def main(character_name="warrior"):
                 if attack_btn_rect.collidepoint(ev.pos):
                     current_room.player_turn()
                     play_sfx("Sounds/card_back.wav", volume=0.8)
+                    game_manager.room.give_enemy_random_stats()
             elif ev.type == pygame.VIDEORESIZE:
                 sw, sh = ev.size
                 screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)

@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 from Screen_and_Backrounds import  bild_laden
 class Enemy:
-    def __init__(self, name, health, damage, reward,Grafiken_path):
+    def __init__(self, name, health, damage, reward,Grafiken_path,Block,possible_damage,possible_block):
         self.name = name
         self.health = health
         self.damage = damage
@@ -11,9 +11,11 @@ class Enemy:
         self.alive = True 
         self.grafiken_path = Path(Grafiken_path)
         self._sprite: Optional[pygame.Surface] = None
-
+        self.block =Block
+        self.possible_damage =possible_damage
+        self.possible_block =possible_block
     def take_damage(self, amount):
-        self.health -= amount
+        self.health -= (amount-self.block)
         if self.health <= 0:
             self.alive = False
 
@@ -57,5 +59,5 @@ class Enemy:
             screen.blit(self._sprite, rect)
 
     def __str__(self):
-        return (f"Player(name={self.name}, health={self.health}, damage={self.damage}, "
+        return (f"Player(name={self.name}, health={self.health}, damage={self.damage}, block={self.block} "
                 f"reward={self.reward})")
