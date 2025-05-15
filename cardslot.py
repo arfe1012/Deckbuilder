@@ -4,7 +4,7 @@ from typing import List
 from Sounds.Sound import play_sfx
 from pathlib import Path
 import math
-
+import numpy as np
 
 CARD_SCALE = 0.35          # größenabhängig von Original-PNG
 CARD_GAP   = 30            # horizontaler Abstand zwischen Karten
@@ -90,7 +90,7 @@ def handle_hand_events(events, hand: List[CardSlot], room) -> None:
             dragged_slot.rect.topleft = (ev.pos[0] - ox, ev.pos[1] - oy)
 
 def wave_hand(hand_slots: List[CardSlot], time_ms: int,
-              amplitude: int = 70, wavelength: float = 3*math.pi) -> None:
+              amplitude: int = 1000, wavelength: float = 0.5*math.pi) -> None:
     """
     Verschiebt die Karten wie eine La-Ola-Welle: jede Karte wandert
     sinusförmig ein Stück nach oben.
@@ -106,6 +106,6 @@ def wave_hand(hand_slots: List[CardSlot], time_ms: int,
         base_y = slot.target.y
         # Wellenoffset berechnen
         phase = time_ms / 200.0 + idx * (wavelength / len(hand_slots))
-        offset = int(math.sin(phase) * amplitude)
+        offset = int(np.abs(math.sin(phase) * amplitude))
         slot.rect.y = base_y - offset
         play_sfx(Path("Sounds") / "card_Wave_1.wav", volume=0.4)
