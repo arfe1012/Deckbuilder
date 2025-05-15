@@ -6,7 +6,7 @@ from pathlib import Path
 class Room:
     def __init__(self, player):
         self.player = player
-        self.enemy = Enemy(name = "Silas", health = 200, damage = 10, reward = 1000,Grafiken_path= Path("Grafiken") / "enemy_1.png",Block=10,possible_damage=[0,1,2,3,4,5,6,7,8,9,10],possible_block=[0,1,2,3,4,5,6,7,8,9,10])
+        self.enemy = Enemy(name = "Silas", health = 200, damage = 10, reward = 1000,Grafiken_path= Path("Grafiken") / "enemy_1.png",Block=10,possible_damage=[0,3,8,10,15,16,6,7,20],possible_block=[0,3,8,10,15,16,6,7,20])
         self.left_deck = player.start_deck
         self.shown_cards = []
         self.right_deck = []
@@ -121,6 +121,7 @@ class Room:
             return False
         else:
             return True
+
     
     def check_if_player_alive(self):
         if self.player.health <= 0:

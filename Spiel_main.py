@@ -34,7 +34,14 @@ def main(character_name="warrior"):
     blank = pygame.image.load("Grafiken/card.png").convert_alpha()
     card_imgs = [blank] * 5                       # später echte Artworks hier
     hand_slots = hand.create_hand(card_imgs, screen_rect, current_room)
-
+#------------------LaoalaWElle----------
+    wave_active     = False
+    return_active   = False
+    wave_start      = 0
+    return_start    = 0
+    wave_duration   = 800    # ms
+    return_duration = 300 
+#----------------------------------------
     clock = pygame.time.Clock()
     running = True
     font = pygame.font.SysFont(None, 28, bold=True)
@@ -61,9 +68,10 @@ def main(character_name="warrior"):
             elif ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
             # Klick-IN-Button?
                 if attack_btn_rect.collidepoint(ev.pos):
-                    current_room.player_turn()
                     play_sfx("Sounds/card_back.wav", volume=0.8)
-                    game_manager.room.give_enemy_random_stats()
+                    wave_active   = True
+                    return_active = False
+                    wave_start    = pygame.time.get_ticks()
             elif ev.type == pygame.VIDEORESIZE:
                 sw, sh = ev.size
                 screen = pygame.display.set_mode(ev.size, pygame.RESIZABLE)
@@ -72,6 +80,36 @@ def main(character_name="warrior"):
                 hand_slots = hand.create_hand(card_imgs, screen.get_rect(), current_room)
 
         # Drag & Drop
+        now = pygame.time.get_ticks()
+        if wave_active:
+            elapsed = now - wave_start
+            hand.wave_hand(hand_slots, elapsed, amplitude=20)  # z.B. größere Amplitude
+            if elapsed >= wave_duration:
+                wave_active   = False
+                return_active = True
+                return_start  = now
+                # Merke dir die letzte Offsets:
+                for slot in hand_slots:
+                    slot._wave_offset = slot.target.y - slot.rect.y
+
+        # ─── Rück-Animation ───────────────────────────────────────────
+        elif return_active:
+            elapsed = now - return_start
+            t = min(elapsed/return_duration, 1.0)
+            for slot in hand_slots:
+                base_y = slot.target.y
+                offset = getattr(slot, "_wave_offset", 0)
+                # Lerp von offset → 0
+                slot.rect.y = int(base_y - offset * (1 - t))
+            if t >= 1.0:
+                return_active = False
+                # Cleanup: sicher auf Ziel-Y setzen
+                for slot in hand_slots:
+                    slot.rect.y = slot.target.y
+                current_room.player_turn()
+                game_manager.room.give_enemy_random_stats()
+
+
         hand.handle_hand_events(events, hand_slots, current_room)
 
         # ---------------------------- Zeichnen -----------------------------

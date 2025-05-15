@@ -3,7 +3,7 @@ import pygame
 from typing import List
 from Sounds.Sound import play_sfx
 from pathlib import Path
-
+import math
 
 
 CARD_SCALE = 0.35          # größenabhängig von Original-PNG
@@ -88,3 +88,24 @@ def handle_hand_events(events, hand: List[CardSlot], room) -> None:
             # Karte folgt Maus (unter Beibehaltung des Klick-Offsets)
             ox, oy = getattr(dragged_slot, "offset", (0, 0))
             dragged_slot.rect.topleft = (ev.pos[0] - ox, ev.pos[1] - oy)
+
+def wave_hand(hand_slots: List[CardSlot], time_ms: int,
+              amplitude: int = 70, wavelength: float = 3*math.pi) -> None:
+    """
+    Verschiebt die Karten wie eine La-Ola-Welle: jede Karte wandert
+    sinusförmig ein Stück nach oben.
+
+    Args:
+        hand_slots: Liste der CardSlot-Objekte
+        time_ms:    aktuelle Zeit in Millisekunden (z.B. pygame.time.get_ticks())
+        amplitude:  maximale Höhe der Welle in Pixeln
+        wavelength: Abstand im Sinus zwischen Karten
+    """
+    for idx, slot in enumerate(hand_slots):
+        # Grundposition am target halten
+        base_y = slot.target.y
+        # Wellenoffset berechnen
+        phase = time_ms / 200.0 + idx * (wavelength / len(hand_slots))
+        offset = int(math.sin(phase) * amplitude)
+        slot.rect.y = base_y - offset
+        play_sfx(Path("Sounds") / "card_Wave_1.wav", volume=0.4)

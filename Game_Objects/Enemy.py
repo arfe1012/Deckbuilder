@@ -15,9 +15,10 @@ class Enemy:
         self.possible_damage =possible_damage
         self.possible_block =possible_block
     def take_damage(self, amount):
-        self.health -= (amount-self.block)
-        if self.health <= 0:
-            self.alive = False
+        if amount >0:
+            self.health -= (amount-self.block)
+            if self.health <= 0:
+                self.alive = False
 
     def attack(self, player):
         player.take_damage(self.damage)
