@@ -5,6 +5,32 @@ from Screen_and_Backrounds import screenscale, bild_laden, scale_bg
 from Sounds.Sound import play_bgm, stop_bgm,play_sfx
 import cardslot as hand                      # <– Modul komplett importieren
 from Game.GameManager import GameManager
+class SlashEffect:
+    def __init__(self, image: pygame.Surface,
+                 start_pos: tuple[int,int],
+                 end_pos:   tuple[int,int],
+                 duration:  int = 300,scale: float=1.0):
+        if scale != 1.0:
+            w, h = image.get_size()
+            image = pygame.transform.smoothscale(image, (int(w*scale), int(h*scale)))
+        self.image = image
+        self.start    = pygame.Vector2(start_pos)
+        self.end      = pygame.Vector2(end_pos)
+        self.duration = duration
+        self.elapsed  = 0
+        self.rect     = self.image.get_rect(center=start_pos)
+
+    def update(self, dt: int):
+        self.elapsed += dt
+        t = min(self.elapsed / self.duration, 1.0)
+        pos = self.start.lerp(self.end, t)
+        self.rect.center = (int(pos.x), int(pos.y))
+
+    def draw(self, surface: pygame.Surface):
+        surface.blit(self.image, self.rect)
+
+    def is_finished(self) -> bool:
+        return self.elapsed >= self.duration
 
 
 def main(character_name="warrior"):
@@ -34,6 +60,10 @@ def main(character_name="warrior"):
     blank = pygame.image.load("Grafiken/card.png").convert_alpha()
     card_imgs = [blank] * 5                       # später echte Artworks hier
     hand_slots = hand.create_hand(card_imgs, screen_rect, current_room)
+#_____________angriffeeffeck
+    slash_img = pygame.transform.smoothscale(pygame.image.load("Grafiken/attack.png").convert_alpha(),(100, 25))
+    slashes   = []      # wird SlashEffect-Objekte aufnehmen
+    attack_queued = False
 #------------------LaoalaWElle----------
     wave_active     = False
     return_active   = False
@@ -58,6 +88,7 @@ def main(character_name="warrior"):
     attack_btn_rect = pygame.Rect(btn_x, btn_y, btn_w, btn_h)
     #________________________________________________________________________
     while running:
+        dt     = clock.tick(60)
         events = pygame.event.get()               # Liste für Drag-Handling
         for ev in events:
             if ev.type == pygame.QUIT:
@@ -67,8 +98,35 @@ def main(character_name="warrior"):
                     running = False
             elif ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
             # Klick-IN-Button?
-                if attack_btn_rect.collidepoint(ev.pos):
+                if attack_btn_rect.collidepoint(ev.pos)and not attack_queued and len(slashes) == 0 and wave_active   == False:
                     play_sfx("Sounds/card_back.wav", volume=0.8)
+                    p_rect = Spieler._sprite.get_rect(center=Spieler._sprite.get_rect().center)
+                    e_rect = game_manager.room.enemy._sprite.get_rect(center=game_manager.room.enemy._sprite.get_rect().center)
+                    start_v = pygame.Vector2(player_rect.center)
+                    try:
+                        end_v = pygame.Vector2(enemy_rect.center)
+                    except AttributeError:
+                        end_v = pygame.Vector2(player_rect.center) + pygame.Vector2(-100, 0)
+
+                    direction = (end_v - start_v).normalize()
+
+                    # Pixel-Abstand vom Mittelpunkt weglassen
+                    start_pad = 50  # schiebt den Anfang weiter vor die Spielfigur
+                    end_pad   = 250 # lässt den Effekt etwas vor dem Gegner enden
+
+                    # Neue Start- und End-Koordinaten
+                    start_pos = (start_v + direction * start_pad)
+                    end_pos   = (end_v   - direction * end_pad)
+
+                    # Slash mit den angepassten Koordinaten starten
+                    slashes.append(
+                        SlashEffect(
+                            slash_img,
+                            (int(start_pos.x), int(start_pos.y)),
+                            (int(end_pos.x),   int(end_pos.y)),
+                            duration=300,scale=5
+                        )
+                    )
                     wave_active   = True
                     return_active = False
                     wave_start    = pygame.time.get_ticks()
@@ -108,15 +166,31 @@ def main(character_name="warrior"):
                     slot.rect.y = slot.target.y
                 current_room.player_turn()
                 game_manager.room.give_enemy_random_stats()
+        
+        for slash in slashes:
+            slash.update(dt)
 
+        # 2) Draw Slash(s) direkt nach Background, vor allem anderen
+        screen.blit(background, (0,0))
+        for slash in slashes:
+            slash.draw(screen)
+
+        # 3) Fertige Effekte abarbeiten
+        finished = [s for s in slashes if s.is_finished()]
+        for s in finished:
+            slashes.remove(s)
+            if attack_queued:
+                current_room.player_turn()
+                game_manager.room.give_enemy_random_stats()
+                attack_queued = False
 
         hand.handle_hand_events(events, hand_slots, current_room)
 
         # ---------------------------- Zeichnen -----------------------------
-        screen.blit(background, (0, 0))
+        # screen.blit(background, (0, 0))
         hand.draw_hand(screen, hand_slots)
-        Spieler.draw_sprite(screen, scale=0.55) #Spieler zeichnen
-        game_manager.room.enemy.draw_sprite(screen,scale=0.55)
+        player_rect=Spieler.draw_sprite(screen, scale=0.55) #Spieler zeichnen
+        enemy_rect=game_manager.room.enemy.draw_sprite(screen,scale=0.55)
         #------------------ Agriffsbutton zeichen----------
         pygame.draw.rect(screen, (255, 0, 0, 128), attack_btn_rect, border_radius=8)
         # 2) leicht hellere Umrandung

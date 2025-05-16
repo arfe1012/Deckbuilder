@@ -58,6 +58,8 @@ class Enemy:
                     (getattr(screen_rect, anchor)[0] + offset[0],
                         getattr(screen_rect, anchor)[1] - offset[1]))
             screen.blit(self._sprite, rect)
+            self.last_rect = rect
+            return rect
 
     def __str__(self):
         return (f"Player(name={self.name}, health={self.health}, damage={self.damage}, block={self.block} "
