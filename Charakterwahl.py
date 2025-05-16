@@ -130,7 +130,7 @@ def run_character_select() -> Character | None:
     screen,screen_width,screen_height = screenscale()
     clock = pygame.time.Clock()
     # Intro-Video vor dem Menü
-    intro_path = Path(__file__).parent / "Videos" / "introo.mp4"
+    intro_path = Path(__file__).parent / "Videos" / "introoo.mp4"
     if intro_path.exists():
         play_intro(intro_path, screen, clock)
     play_bgm(Path("Sounds") / "game soundtrack 2.wav", volume=1)
