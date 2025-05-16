@@ -5,6 +5,7 @@ from Screen_and_Backrounds import screenscale, bild_laden, scale_bg
 from Sounds.Sound import play_bgm, stop_bgm,play_sfx
 import cardslot as hand                      # <– Modul komplett importieren
 from Game.GameManager import GameManager
+import time
 class SlashEffect:
     def __init__(self, image: pygame.Surface,
                  start_pos: tuple[int,int],
@@ -62,8 +63,10 @@ def main(character_name="warrior"):
     hand_slots = hand.create_hand(card_imgs, screen_rect, current_room)
 #_____________angriffeeffeck
     slash_img = pygame.transform.smoothscale(pygame.image.load("Grafiken/attack.png").convert_alpha(),(100, 25))
+    slash_img_enemy = pygame.transform.smoothscale(pygame.image.load("Grafiken/attack_enemy.png").convert_alpha(),(100, 25))
     slashes   = []      # wird SlashEffect-Objekte aufnehmen
     attack_queued = False
+    attack_phase = None 
 #------------------LaoalaWElle----------
     wave_active     = False
     return_active   = False
@@ -100,8 +103,7 @@ def main(character_name="warrior"):
             # Klick-IN-Button?
                 if attack_btn_rect.collidepoint(ev.pos)and not attack_queued and len(slashes) == 0 and wave_active   == False:
                     play_sfx("Sounds/card_back.wav", volume=0.8)
-                    p_rect = Spieler._sprite.get_rect(center=Spieler._sprite.get_rect().center)
-                    e_rect = game_manager.room.enemy._sprite.get_rect(center=game_manager.room.enemy._sprite.get_rect().center)
+
                     start_v = pygame.Vector2(player_rect.center)
                     try:
                         end_v = pygame.Vector2(enemy_rect.center)
@@ -112,18 +114,30 @@ def main(character_name="warrior"):
 
                     # Pixel-Abstand vom Mittelpunkt weglassen
                     start_pad = 50  # schiebt den Anfang weiter vor die Spielfigur
-                    end_pad   = 250 # lässt den Effekt etwas vor dem Gegner enden
-
+                    end_pad   = 400# lässt den Effekt etwas vor dem Gegner enden
+                    Start_pad_en =300
+                    end_pad_en = 400
                     # Neue Start- und End-Koordinaten
                     start_pos = (start_v + direction * start_pad)
                     end_pos   = (end_v   - direction * end_pad)
-
+                    #----
+                    end_pos_en = (start_v + direction * end_pad_en)
+                    start_pos_en   = (end_v   - direction * Start_pad_en)
                     # Slash mit den angepassten Koordinaten starten
+                    
                     slashes.append(
                         SlashEffect(
                             slash_img,
                             (int(start_pos.x), int(start_pos.y)),
                             (int(end_pos.x),   int(end_pos.y)),
+                            duration=300,scale=5
+                        )
+                    )
+                    slashes.append(
+                        SlashEffect(
+                            slash_img_enemy,
+                            (int(start_pos_en.x), int(start_pos_en.y)),
+                            (int(end_pos_en.x),   int(end_pos_en.y)),
                             duration=300,scale=5
                         )
                     )
